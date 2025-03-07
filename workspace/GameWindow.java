@@ -205,7 +205,9 @@ public class GameWindow {
                 		
                 		// this is the only section you really need to modify (although you're certainly welcome to mess
                 		//with the rest of the file, but do so at your own peril)
-                        " <<<<<<<<<<<<<<<Your instructions go here>>>>>>>>>",
+                        "click the pieces to move the pieces. \n" + //
+                                                        "The new piece is named George and can move one square up/down or right/left.\n" + //
+                                                                                                                        "George is sneaky so when he captures a piece, he returns back to the original position he was it before he took the piece.",
                         
                         
                         
