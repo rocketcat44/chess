@@ -98,24 +98,28 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     	// ////// PIECES !!!!!
     	for (int row = 0; row < 2; row++){
             for (int col = 0; col < 8; col++){
-                Piece george = new Piece(false, "bgeorge.png");///edit parameters for both
-                board[row][col].put(george);
+                if (col ==3 && row == 0){
+                    Piece king = new King(false,"bking.png");
+                    board[row][col].put(king);
+                }else{
+                    Piece george = new George(false, "bgeorge.png");///edit parameters for both
+                    board[row][col].put(george);
+                }
             }
         }
 
         for (int row = 6; row < 8; row++){
             for (int col = 0; col < 8; col++){
-                Piece george = new Piece(true, "wgeorge.png");///edit parameters for both
-                board[row][col].put(george);
+                if (col==4 && row == 7){
+                    Piece king = new King(true, "wking.png");
+                    board[row][col].put(king);
+                }else{
+                    Piece george = new George(true, "wgeorge.png");///edit parameters for both
+                    board[row][col].put(george);
+                }
             }
         }
 
-
-        //georges for real this time
-        Piece georgeB = new Piece(false, "bgeorge.png");///black
-        board[2][2].put(georgeB);
-        Piece georgeW = new Piece(true, "wgeorge.png");///white
-        board[5][5].put(georgeW);
 
     }
 
@@ -157,6 +161,31 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         
     }
 
+
+    //precondition - the board is initialized and contains a king of either color. The boolean kingColor corresponds to the color of the king we wish to know the status of.
+    //postcondition - returns true of the king is in check and false otherwise.
+    public boolean isInCheck(boolean kingColor){
+        Square king= null;
+        ArrayList<Square> check = new ArrayList<Square>();
+		for(Square [] row: board){
+            for(Square s: row){
+                if ((s.getOccupyingPiece() instanceof King) && s.getOccupyingPiece().getColor() == kingColor){
+                    king = s;
+                }else{
+                    for (Square r: s.getOccupyingPiece().getLegalMoves(this, fromMoveSquare)){
+                        check.add(r);
+                    }
+                }
+            }
+        }
+
+        if (king!= null){return check.contains(king);}
+        else{return false;}
+    }
+          
+
+
+
     @Override
     public void mousePressed(MouseEvent e) {
         currX = e.getX();
@@ -182,7 +211,10 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     //moving the new piece to it's new board location. 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if(currPiece!=null){
+        
+        if(currPiece!=null && ((currPiece.getColor() && whiteTurn)
+        || (!currPiece.getColor() && !whiteTurn))){
+            
             Square endSquare = (Square) this.getComponentAt(new Point(e.getX(), e.getY()));
             
             //using currPiece
@@ -195,6 +227,12 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         
             for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)){
                 if (s.equals(endSquare)){
+                    
+/* 
+                    if (isInCheck(whiteTurn)){
+                        ///////////////////////////////////////////////////////////////////////////////////FINISH HERE
+                    }
+*/
 
 
                     // if the piece thats in the square that george is going into is black, then george stays in place and the black piece gets eaten (removed), otherwise george goes forward
@@ -212,7 +250,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         
 
-        fromMoveSquare.setDisplay(true);
+        if (fromMoveSquare!=null){fromMoveSquare.setDisplay(true);}
         currPiece = null;
         repaint();
         
@@ -223,7 +261,8 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         currX = e.getX() - 24;
         currY = e.getY() - 24;
 
-        if(currPiece!=null){
+        if(currPiece!=null && ((currPiece.getColor() && whiteTurn)
+                    || (!currPiece.getColor() && !whiteTurn))){
             for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)){
                 s.setBorder(BorderFactory.createLineBorder(Color.MAGENTA));
             }
