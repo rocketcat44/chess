@@ -49,16 +49,16 @@ public class George extends Piece
 	// event that no squares are accessable returns an empty list.
     public ArrayList<Square> getControlledSquares(Square[][] b, Square start) {
       ArrayList<Square> moves = new ArrayList<Square>();
-        if (start.getCol()+1<8 && (b[start.getRow()][start.getCol()+1].isOccupied() || b[start.getRow()][start.getCol()+1].getOccupyingPiece().getColor()!= color) ){
+        if (start.getCol()+1<8) {
           moves.add(b[start.getRow()][start.getCol()+1]);
         }
-        if (start.getCol()-1>=0 && (b[start.getRow()][start.getCol()-1].isOccupied() || b[start.getRow()][start.getCol()-1].getOccupyingPiece().getColor()!= color)){
+        if (start.getCol()-1>=0){
           moves.add(b[start.getRow()][start.getCol()-1]);
         }
-        if (start.getRow()-1>=0 && (b[start.getRow()-1][start.getCol()].isOccupied() || b[start.getRow()-1][start.getCol()].getOccupyingPiece().getColor()!= color)){
+        if (start.getRow()-1>=0){
           moves.add(b[start.getRow()-1][start.getCol()]);
         }
-        if (start.getRow()+1<8 && (b[start.getRow()+1][start.getCol()].isOccupied() || b[start.getRow()+1][start.getCol()].getOccupyingPiece().getColor()!= color)){
+        if (start.getRow()+1<8 ){
           moves.add(b[start.getRow()+1][start.getCol()]);
         }
     

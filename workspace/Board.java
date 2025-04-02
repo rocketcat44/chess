@@ -169,18 +169,21 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
         ArrayList<Square> check = new ArrayList<Square>();
 		for(Square [] row: board){
             for(Square s: row){
-                if ((s.getOccupyingPiece() instanceof King) && s.getOccupyingPiece().getColor() == kingColor){
-                    king = s;
-                }else{
-                    for (Square r: s.getOccupyingPiece().getLegalMoves(this, fromMoveSquare)){
-                        check.add(r);
+                if (s.getOccupyingPiece() != null){
+                    if (s.getOccupyingPiece().getColor() != kingColor){
+                        for (Square r: s.getOccupyingPiece().getControlledSquares(board, s)){
+                            check.add(r);
+                        }
+                    }else{
+                        if (s.getOccupyingPiece() instanceof King && s.getOccupyingPiece().color == kingColor){
+                            king = s;
+                        }
                     }
                 }
             }
         }
-
-        if (king!= null){return check.contains(king);}
-        else{return false;}
+        
+        return check.contains(king);
     }
           
 
@@ -211,7 +214,7 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
     //moving the new piece to it's new board location. 
     @Override
     public void mouseReleased(MouseEvent e) {
-        
+        Piece oldPiece;
         if(currPiece!=null && ((currPiece.getColor() && whiteTurn)
         || (!currPiece.getColor() && !whiteTurn))){
             
@@ -226,27 +229,49 @@ public class Board extends JPanel implements MouseListener, MouseMotionListener 
 
         
             for(Square s: currPiece.getLegalMoves(this, fromMoveSquare)){
-                if (s.equals(endSquare)){
-                    
-/* 
-                    if (isInCheck(whiteTurn)){
-                        ///////////////////////////////////////////////////////////////////////////////////FINISH HERE
-                    }
-*/
+                if (s.equals(endSquare) && whiteTurn == currPiece.getColor()){
+
+
+                    oldPiece = s.getOccupyingPiece();
 
 
                     // if the piece thats in the square that george is going into is black, then george stays in place and the black piece gets eaten (removed), otherwise george goes forward
-                    if (s.getOccupyingPiece() != null && (s.getOccupyingPiece().getColor() != (currPiece.getColor()))){
+                    if (s.getOccupyingPiece() != null && currPiece instanceof George){
                         endSquare.removePiece();
                     }else{
                         fromMoveSquare.removePiece();
                         s.put(currPiece);
                     }
+
+                    System.out.println(whiteTurn + " is in Check = " + isInCheck(whiteTurn));
+                    System.out.println(!whiteTurn + " is in Check = " + isInCheck(!whiteTurn));
                     
-                    whiteTurn = !whiteTurn;
+
+                    if (isInCheck(whiteTurn)){
+                        //take back your turn
+                        fromMoveSquare.put(currPiece);
+                        endSquare.put(oldPiece);
+                    }else{
+                        whiteTurn = !whiteTurn;//continue the game
+                    }
+                    System.out.println(whiteTurn + " is in Check = " + isInCheck(whiteTurn));
+                    System.out.println(!whiteTurn + " is in Check = " + isInCheck(!whiteTurn));
+                    
+                    
+
+
                 }
+
+                
             }
-        }
+
+            /*
+                     * 4) Modify your mouseReleased function to only allow moves which do not put your own king in check.
+                     * 5) Modify your mouseReleased function to only allow moves which get you out of check if you started your own turn in check.
+                     */
+        
+            repaint();
+         }
 
         
 
